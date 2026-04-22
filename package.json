@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "start:dryrun": "set DRY_RUN=true&& node server.js",
+    "dev": "nodemon server.js",
+    "dev:dryrun": "set DRY_RUN=true&& nodemon server.js"
+  },
+  "author": "manglesh",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/bigquery": "^8.1.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
