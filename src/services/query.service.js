@@ -69,3 +69,36 @@ export const searchComplaints = async ({
     params: { status: status || null, limit },
   });
 };
+
+export const getSkuByCategory = async () => {
+  const sql = `
+    SELECT
+      category_name,
+      COUNT(DISTINCT sku_name) AS sku_count,
+      ARRAY_AGG(DISTINCT sku_name) AS sku_name
+    FROM \`learningbigq-493718.product_data.product_data\`
+    GROUP BY category_name
+  `;
+
+  return executeQuery({ sql });
+};
+
+export const getSalesByCategoryWithinDateRange = async ({
+  startDate,
+  endDate,
+} = {}) => {
+  const sql = `
+    SELECT
+      category_name,
+     ROUND(SUM(COALESCE(SAFE_CAST(sales AS FLOAT64), 0)),2 )AS total_sales
+    FROM \`learningbigq-493718.product_data.product_data\`
+    WHERE DATE(scrape_timestamp) BETWEEN @startDate AND @endDate
+    GROUP BY category_name
+    ORDER BY total_sales DESC
+  `;
+
+  return executeQuery({
+    sql,
+    params: { startDate, endDate },
+  });
+};

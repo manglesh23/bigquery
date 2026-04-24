@@ -4,6 +4,8 @@ import {
   getTopComplaints,
   getComplaintsByStatus,
   searchComplaints,
+  getSkuByCategory,
+  getSalesByCategoryWithinDateRange,
 } from "../services/query.service.js";
 
 const parseLimit = (value, fallback) => {
@@ -14,73 +16,83 @@ const parseLimit = (value, fallback) => {
   return parsed;
 };
 
-export const getQueryTemplate = async (req, res, next) => {
-  try {
-    const template = getTemplateQuery();
+export const getQueryTemplate = async (req, res) => {
+  const template = getTemplateQuery();
 
-    res.status(200).json({
-      success: true,
-      data: template,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).json({
+    success: true,
+    data: template,
+  });
 };
 
-export const runDatasetQuery = async (req, res, next) => {
-  try {
-    const result = await runQueryAgainstDataset();
+export const runDatasetQuery = async (req, res) => {
+  const result = await runQueryAgainstDataset();
 
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
 };
 
-export const topComplaintsQuery = async (req, res, next) => {
-  try {
-    const limit = parseLimit(req.query.limit, 10);
-    const result = await getTopComplaints({ limit });
+export const topComplaintsQuery = async (req, res) => {
+  const limit = parseLimit(req.query.limit, 10);
+  const result = await getTopComplaints({ limit });
 
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
 };
 
-export const complaintsByStatusQuery = async (req, res, next) => {
-  try {
-    const limit = parseLimit(req.query.limit, 25);
-    const result = await getComplaintsByStatus({ limit });
+export const complaintsByStatusQuery = async (req, res) => {
+  const limit = parseLimit(req.query.limit, 25);
+  const result = await getComplaintsByStatus({ limit });
 
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
 };
 
-export const searchComplaintsQuery = async (req, res, next) => {
-  try {
-    const limit = parseLimit(req.query.limit, 50);
-    const result = await searchComplaints({
-      status: req.query.status,
-      limit,
-    });
+export const searchComplaintsQuery = async (req, res) => {
+  const limit = parseLimit(req.query.limit, 50);
+  const result = await searchComplaints({
+    status: req.query.status,
+    limit,
+  });
 
-    res.status(200).json({
-      success: true,
-      data: result,
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+};
+
+export const skuByCategoryQuery = async (req, res) => {
+  const result = await getSkuByCategory();
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+};
+
+export const salesByCategoryWithinDateRangeQuery = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({
+      success: false,
+      message: "startDate and endDate are required query parameters.",
     });
-  } catch (error) {
-    next(error);
   }
+
+  const result = await getSalesByCategoryWithinDateRange({
+    startDate,
+    endDate,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
 };

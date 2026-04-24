@@ -40,10 +40,13 @@ export const executeQuery = async ({ sql, params }) => {
       message: "Dry run completed. Query was validated but not executed.",
     };
   }
-
+  const dataset = bigquery.dataset('product_data');
+  const [metadata] = await dataset.getMetadata();
+  // console.log("metadata:-", metadata); // e.g., "US", "EU", "us-central1
+  // "
   const [rows] = await bigquery.query({
     query: sql,
-    location: "US",
+    location: "",
     params,
   });
 
